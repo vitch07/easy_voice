@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   url_launcher: ^6.2.4
+  speech_to_text: ^6.6.0
 
 dev_dependencies:
   flutter_test:

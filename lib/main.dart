@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:url_launcher/url_launcher.dart';
 
 void main() {
@@ -25,6 +26,15 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _controller = TextEditingController();
+  late stt.SpeechToText _speech; // Marked as late
+  bool _isListening = false;
+  String _text = 'Press the microphone button and start speaking';
+
+  @override
+  void initState() {
+    super.initState();
+    _speech = stt.SpeechToText();
+  }
 
   String processSearchQuery(String query) {
     final RegExp poduRegex =
@@ -38,9 +48,29 @@ class _SearchPageState extends State<SearchPage> {
     processedQuery = processedQuery.replaceAll(' ', '+');
     final Uri url = Uri.parse(
         'https://www.youtube.com/results?search_query=$processedQuery');
-    // Launch URL
     if (!await launchUrl(url)) {
       throw Exception('Could not launch $url');
+    }
+  }
+
+  void _toggleRecording() async {
+    if (_isListening) {
+      await _speech.stop(); // No need to assign the result
+      setState(() => _isListening = false);
+    } else {
+      bool available = await _speech.initialize(
+        onStatus: (val) => print('onStatus: $val'),
+        onError: (val) => print('onError: $val'),
+      );
+      if (available) {
+        setState(() => _isListening = true);
+        _speech.listen(
+          onResult: (val) => setState(() {
+            _text = val.recognizedWords;
+            _controller.text = _text; // This should not cause an error
+          }),
+        );
+      }
     }
   }
 
@@ -67,15 +97,22 @@ class _SearchPageState extends State<SearchPage> {
               onPressed: _searchYouTube,
               child: Text('Search on YouTube'),
             ),
+            SizedBox(height: 20),
+            FloatingActionButton(
+              onPressed: _toggleRecording,
+              child: Icon(_isListening ? Icons.mic : Icons.mic_none),
+            ),
+            SizedBox(height: 20),
+            Text(
+              _text,
+              style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w400),
+            ),
           ],
         ),
       ),
     );
-  }
-}
-
-Future<void> _launchUrl(Uri url) async {
-  if (!await launchUrl(url)) {
-    throw Exception('Could not launch $url');
   }
 }
