@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(MyApp());
@@ -54,23 +55,35 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void _toggleRecording() async {
-    if (_isListening) {
-      await _speech.stop(); // No need to assign the result
-      setState(() => _isListening = false);
-    } else {
-      bool available = await _speech.initialize(
-        onStatus: (val) => print('onStatus: $val'),
-        onError: (val) => print('onError: $val'),
-      );
-      if (available) {
-        setState(() => _isListening = true);
-        _speech.listen(
-          onResult: (val) => setState(() {
-            _text = val.recognizedWords;
-            _controller.text = _text; // This should not cause an error
-          }),
+    var microphoneStatus = await Permission.microphone.status;
+    if (!microphoneStatus.isGranted) {
+      await Permission.microphone.request();
+    }
+
+    // Check again after requesting permissions
+    microphoneStatus = await Permission.microphone.status;
+    if (microphoneStatus.isGranted) {
+      if (_isListening) {
+        await _speech.stop();
+        setState(() => _isListening = false);
+      } else {
+        bool available = await _speech.initialize(
+          onStatus: (val) => print('onStatus: $val'),
+          onError: (val) => print('onError: $val'),
         );
+        if (available) {
+          setState(() => _isListening = true);
+          _speech.listen(
+            onResult: (val) => setState(() {
+              _text = val.recognizedWords;
+              _controller.text = _text;
+            }),
+          );
+        }
       }
+    } else {
+      // Handle the case when microphone permission is denied
+      print('Microphone permission is denied.');
     }
   }
 
