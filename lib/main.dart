@@ -11,23 +11,25 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Vishnu\'s Custom YouTube Search App',
+      title: 'Custom YouTube Search App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: SearchPage(),
+      home: PlaygroundPageWidget(),
     );
   }
 }
 
-class SearchPage extends StatefulWidget {
+class PlaygroundPageWidget extends StatefulWidget {
+  const PlaygroundPageWidget({Key? key}) : super(key: key);
+
   @override
-  _SearchPageState createState() => _SearchPageState();
+  _PlaygroundPageWidgetState createState() => _PlaygroundPageWidgetState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _PlaygroundPageWidgetState extends State<PlaygroundPageWidget> {
   final TextEditingController _controller = TextEditingController();
-  late stt.SpeechToText _speech; // Marked as late
+  late stt.SpeechToText _speech;
   bool _isListening = false;
   String _text = 'Press the microphone button and start speaking';
 
@@ -37,16 +39,37 @@ class _SearchPageState extends State<SearchPage> {
     _speech = stt.SpeechToText();
   }
 
-  String processSearchQuery(String query) {
-    final RegExp poduRegex =
-        RegExp(r'\bvideo podu\b|\bpodu\b', caseSensitive: false);
-    return query.replaceAll(poduRegex, '').trim();
+  void _toggleRecording() async {
+    var microphoneStatus = await Permission.microphone.status;
+    if (!microphoneStatus.isGranted) {
+      await Permission.microphone.request();
+    }
+
+    microphoneStatus = await Permission.microphone.status;
+    if (microphoneStatus.isGranted) {
+      if (_isListening) {
+        await _speech.stop();
+        setState(() => _isListening = false);
+      } else {
+        bool available = await _speech.initialize();
+        if (available) {
+          setState(() => _isListening = true);
+          _speech.listen(
+            onResult: (result) => setState(() {
+              _text = result.recognizedWords;
+              _controller.text = _text;
+            }),
+          );
+        }
+      }
+    } else {
+      print('Microphone permission is denied.');
+    }
   }
 
   Future<void> _searchYouTube() async {
-    String rawQuery = _controller.text;
-    String processedQuery = processSearchQuery(rawQuery);
-    processedQuery = processedQuery.replaceAll(' ', '+');
+    String rawQuery = _text; // Use recognized text as query
+    String processedQuery = rawQuery.replaceAll(' ', '+');
     final Uri url = Uri.parse(
         'https://www.youtube.com/results?search_query=$processedQuery');
     if (!await launchUrl(url)) {
@@ -54,76 +77,68 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-  void _toggleRecording() async {
-    var microphoneStatus = await Permission.microphone.status;
-    if (!microphoneStatus.isGranted) {
-      await Permission.microphone.request();
-    }
-
-    // Check again after requesting permissions
-    microphoneStatus = await Permission.microphone.status;
-    if (microphoneStatus.isGranted) {
-      if (_isListening) {
-        await _speech.stop();
-        setState(() => _isListening = false);
-      } else {
-        bool available = await _speech.initialize(
-          onStatus: (val) => print('onStatus: $val'),
-          onError: (val) => print('onError: $val'),
-        );
-        if (available) {
-          setState(() => _isListening = true);
-          _speech.listen(
-            onResult: (val) => setState(() {
-              _text = val.recognizedWords;
-              _controller.text = _text;
-            }),
-          );
-        }
-      }
-    } else {
-      // Handle the case when microphone permission is denied
-      print('Microphone permission is denied.');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Vishnu\'s Custom YouTube Search App'),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                labelText: 'Enter search term',
-                border: OutlineInputBorder(),
+      backgroundColor: Color.fromARGB(255, 180, 204, 235),
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Stack(
+            children: [
+              Align(
+                alignment: AlignmentDirectional(0, -1),
+                child: Text(
+                  'Easy Voice Search',
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 18, 22, 248),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 30,
+                  ),
+                ),
               ),
-            ),
-            SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: _searchYouTube,
-              child: Text('Search on YouTube'),
-            ),
-            SizedBox(height: 20),
-            FloatingActionButton(
-              onPressed: _toggleRecording,
-              child: Icon(_isListening ? Icons.mic : Icons.mic_none),
-            ),
-            SizedBox(height: 20),
-            Text(
-              _text,
-              style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w400),
-            ),
-          ],
+              Align(
+                alignment: AlignmentDirectional(0, -0.75),
+                child: ElevatedButton(
+                  onPressed: _toggleRecording,
+                  child: Icon(_isListening ? Icons.mic : Icons.mic_none,
+                      size: 150),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.transparent,
+                    minimumSize: Size(160, 160),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+              Align(
+                alignment: AlignmentDirectional(0, 0.5),
+                child: ElevatedButton(
+                  onPressed: _searchYouTube,
+                  child: Icon(Icons.ondemand_video, size: 150),
+                  style: ElevatedButton.styleFrom(
+                    primary: Color(0xFFF70707),
+                    minimumSize: Size(160, 160),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+              Align(
+                alignment: AlignmentDirectional(0, -0.1),
+                child: Text(
+                  _text,
+                  style: TextStyle(
+                    color: Color(0xFF101213),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
