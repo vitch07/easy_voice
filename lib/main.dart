@@ -4,30 +4,30 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Custom YouTube Search App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: PlaygroundPageWidget(),
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const PlaygroundPageWidget(),
     );
   }
 }
 
 class PlaygroundPageWidget extends StatefulWidget {
-  const PlaygroundPageWidget({Key? key}) : super(key: key);
+  const PlaygroundPageWidget({super.key});
 
   @override
-  _PlaygroundPageWidgetState createState() => _PlaygroundPageWidgetState();
+  PlaygroundPageWidgetState createState() => PlaygroundPageWidgetState();
 }
 
-class _PlaygroundPageWidgetState extends State<PlaygroundPageWidget> {
+class PlaygroundPageWidgetState extends State<PlaygroundPageWidget> {
   final TextEditingController _controller = TextEditingController();
   late stt.SpeechToText _speech;
   bool _isListening = false;
@@ -63,7 +63,12 @@ class _PlaygroundPageWidgetState extends State<PlaygroundPageWidget> {
         }
       }
     } else {
-      print('Microphone permission is denied.');
+      // Microphone permission is denied
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Microphone permission is denied.')),
+        );
+      }
     }
   }
 
@@ -71,7 +76,8 @@ class _PlaygroundPageWidgetState extends State<PlaygroundPageWidget> {
     String rawQuery = _text; // Use recognized text as query
     String processedQuery = rawQuery.replaceAll(' ', '+');
     final Uri url = Uri.parse(
-        'https://www.youtube.com/results?search_query=$processedQuery');
+      'https://www.youtube.com/results?search_query=$processedQuery',
+    );
     if (!await launchUrl(url)) {
       throw Exception('Could not launch $url');
     }
@@ -80,13 +86,13 @@ class _PlaygroundPageWidgetState extends State<PlaygroundPageWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 180, 204, 235),
+      backgroundColor: const Color.fromARGB(255, 180, 204, 235),
       body: SafeArea(
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: Stack(
             children: [
-              Align(
+              const Align(
                 alignment: AlignmentDirectional(0, -1),
                 child: Text(
                   'Easy Voice Search',
@@ -98,39 +104,41 @@ class _PlaygroundPageWidgetState extends State<PlaygroundPageWidget> {
                 ),
               ),
               Align(
-                alignment: AlignmentDirectional(0, -0.75),
+                alignment: const AlignmentDirectional(0, -0.75),
                 child: ElevatedButton(
                   onPressed: _toggleRecording,
-                  child: Icon(_isListening ? Icons.mic : Icons.mic_none,
-                      size: 150),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.transparent,
-                    minimumSize: Size(160, 160),
+                    backgroundColor: Colors.transparent,
+                    minimumSize: const Size(160, 160),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
+                  child: Icon(
+                    _isListening ? Icons.mic : Icons.mic_none,
+                    size: 150,
+                  ),
                 ),
               ),
               Align(
-                alignment: AlignmentDirectional(0, 0.5),
+                alignment: const AlignmentDirectional(0, 0.5),
                 child: ElevatedButton(
                   onPressed: _searchYouTube,
-                  child: Icon(Icons.ondemand_video, size: 150),
                   style: ElevatedButton.styleFrom(
-                    primary: Color(0xFFF70707),
-                    minimumSize: Size(160, 160),
+                    backgroundColor: const Color(0xFFF70707),
+                    minimumSize: const Size(160, 160),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
+                  child: const Icon(Icons.ondemand_video, size: 150),
                 ),
               ),
               Align(
-                alignment: AlignmentDirectional(0, -0.1),
+                alignment: const AlignmentDirectional(0, -0.1),
                 child: Text(
                   _text,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Color(0xFF101213),
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
