@@ -15,7 +15,7 @@ Easy Voice is an innovative app prototype developed using **Flutter & Dart** tha
 ---<table>
   <tr>
     <th>Working</th>
-    <th>Results</th>
+    <th colspan = "2">Results</th>
   </tr>
   <tr>
     <td>
