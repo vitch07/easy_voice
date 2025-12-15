@@ -12,11 +12,26 @@ Easy Voice is an innovative app prototype developed using **Flutter & Dart** tha
 - 🧓 **Accessibility Focused**: Tailored for elderly and physically challenged users to minimize interaction complexity.
 - 💡 **Prototype UI**: Clean and intuitive user interface designed with accessibility in mind.
 
----
-| Working | Results |
-|----------|-------|
-| ![](assets/Recording%202025-12-15%20111256.gif) | ![](assets/WhatsAppVideo2025-12-15at10.45.09AM-ezgif.com-video-to-gif-converter_1st.gif) |
-| |![](assets/WhatsAppVideo2025-12-15at10.45.09AM-ezgif.com-video-to-gif-converter_2nd.gif) |
+---<table>
+  <tr>
+    <th>Working</th>
+    <th>Results</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/Recording%202025-12-15%20111256.gif" width="260">
+    </td>
+    <td align="center">
+      <img src="assets/WhatsAppVideo2025-12-15at10.45.09AM-ezgif.com-video-to-gif-converter_1st.gif" width="260">
+    </td>
+  </tr>
+  <tr>
+    <td></td>
+    <td align="center">
+      <img src="assets/WhatsAppVideo2025-12-15at10.45.09AM-ezgif.com-video-to-gif-converter_2nd.gif" width="260">
+    </td>
+  </tr>
+</table>
 
 
 ## 🚀 Getting Started
