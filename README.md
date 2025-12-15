@@ -18,8 +18,8 @@ Easy Voice is an innovative app prototype developed using **Flutter & Dart** tha
     <th>Results</th>
   </tr>
   <tr>
-    <td align="center">
-      <img src="assets/Recording%202025-12-15%20111256.gif" width="360" height = "100">
+    <td>
+      <img src="assets/Recording%202025-12-15%20111256.gif" width="260" height = "200">
     </td>
     <td align="center">
       <img src="assets/WhatsAppVideo2025-12-15at10.45.09AM-ezgif.com-video-to-gif-converter_1st.gif" width="200">
