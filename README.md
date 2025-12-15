@@ -24,9 +24,6 @@ Easy Voice is an innovative app prototype developed using **Flutter & Dart** tha
     <td align="center">
       <img src="assets/WhatsAppVideo2025-12-15at10.45.09AM-ezgif.com-video-to-gif-converter_1st.gif" width="200">
     </td>
-  </tr>
-  <tr>
-    <td></td>
     <td align="center">
       <img src="assets/WhatsAppVideo2025-12-15at10.45.09AM-ezgif.com-video-to-gif-converter_2nd.gif" width="200">
     </td>
