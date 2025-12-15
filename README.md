@@ -13,6 +13,10 @@ Easy Voice is an innovative app prototype developed using **Flutter & Dart** tha
 - 💡 **Prototype UI**: Clean and intuitive user interface designed with accessibility in mind.
 
 ---
+| Working | Results |
+|----------|-------|
+| ![](assets/Recording%202025-12-15%20111256.gif) | ![](assets/depth.gif) |
+
 
 ## 🚀 Getting Started
 
